@@ -40,8 +40,9 @@ class qtype_keystrokerecorder_renderer extends qtype_renderer {
         
         $question = $qa->get_question();
         $is_test = $question->name == 'test';
+        $quiz_id = 1;
 
-        return $is_test ? $this->getTestHTML($qa, $options) : $this->getRegistrationHTML($qa, $options);
+        return $is_test ? $this->getTestHTML($qa, $options, $quiz_id) : $this->getRegistrationHTML($qa, $options, $quiz_id);
     }
 
     public function specific_feedback(question_attempt $qa) {
@@ -54,14 +55,14 @@ class qtype_keystrokerecorder_renderer extends qtype_renderer {
         return '';
     }
 
-    protected function getTestHTML($qa, $options)
+    protected function getTestHTML($qa, $options, $quiz_id)
     {
         global $USER, $PAGE;
 
         $question = $qa->get_question();
 
         // inject iframe with the plugin form TODO: hash user id somehow
-        $keystroke_form_html .= '<iframe src="http://localhost:1337/?user=' . strval($USER->id) . '" style="width: 100%; height: 500px;">';
+        $keystroke_form_html .= '<iframe src="http://localhost:1337/?user=' . strval($USER->id) . '&quizId=' . $quiz_id . '" style="width: 100%; height: 500px;">';
 
         $questiontext = $question->format_questiontext($qa);
         $placeholder = false;
@@ -82,14 +83,14 @@ class qtype_keystrokerecorder_renderer extends qtype_renderer {
         return $result;
     }
 
-    protected function getRegistrationHTML($qa, $options)
+    protected function getRegistrationHTML($qa, $options, $quiz_id)
     {
         global $USER, $PAGE;
 
         $question = $qa->get_question();
         
         // inject iframe with the plugin form TODO: hash user id somehow
-        $keystroke_form_html .= '<iframe src="http://localhost:1337/registration.html?user=' . strval($USER->id) . '" style="width: 100%; height: 500px;">';
+        $keystroke_form_html .= '<iframe src="http://localhost:1337/registration.html?user=' . strval($USER->id) . '&quizId=' . $quiz_id . '" style="width: 100%; height: 500px;">';
 
         $questiontext = $question->format_questiontext($qa);
         $placeholder = false;
