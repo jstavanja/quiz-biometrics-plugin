@@ -37,13 +37,31 @@ class qtype_keystrokerecorder_renderer extends qtype_renderer {
     
     public function formulation_and_controls(question_attempt $qa,
             question_display_options $options) {
+        
+        $question = $qa->get_question();
+        $is_test = $question->name == 'test';
 
+        return $is_test ? $this->getTestHTML($qa, $options) : $this->getRegistrationHTML($qa, $options);
+    }
+
+    public function specific_feedback(question_attempt $qa) {
+        // TODO.
+        return '';
+    }
+
+    public function correct_response(question_attempt $qa) {
+        // TODO.
+        return '';
+    }
+
+    protected function getTestHTML($qa, $options)
+    {
         global $USER, $PAGE;
+
+        $question = $qa->get_question();
 
         // inject iframe with the plugin form TODO: hash user id somehow
         $keystroke_form_html .= '<iframe src="http://localhost:1337/?user=' . strval($USER->id) . '" style="width: 100%; height: 500px;">';
-
-        $question = $qa->get_question();
 
         $questiontext = $question->format_questiontext($qa);
         $placeholder = false;
@@ -64,13 +82,31 @@ class qtype_keystrokerecorder_renderer extends qtype_renderer {
         return $result;
     }
 
-    public function specific_feedback(question_attempt $qa) {
-        // TODO.
-        return '';
-    }
+    protected function getRegistrationHTML($qa, $options)
+    {
+        global $USER, $PAGE;
 
-    public function correct_response(question_attempt $qa) {
-        // TODO.
-        return '';
+        $question = $qa->get_question();
+        
+        // inject iframe with the plugin form TODO: hash user id somehow
+        $keystroke_form_html .= '<iframe src="http://localhost:1337/registration.html?user=' . strval($USER->id) . '" style="width: 100%; height: 500px;">';
+
+        $questiontext = $question->format_questiontext($qa);
+        $placeholder = false;
+        
+        if (preg_match('/_____+/', $questiontext, $matches)) {
+            $placeholder = $matches[0];
+        }
+        $input = '**subq controls go in here**';
+
+        if ($placeholder) {
+            $questiontext = substr_replace($questiontext, $input,
+                    strpos($questiontext, $placeholder), strlen($placeholder));
+        }
+
+        $result = html_writer::tag('div', $questiontext, array('class' => 'qtext'));
+        $result .= html_writer::tag('div', $keystroke_form_html, array('class' => 'qform'));
+
+        return $result;
     }
 }
