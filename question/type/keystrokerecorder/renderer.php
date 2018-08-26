@@ -34,15 +34,19 @@ require_once($CFG->libdir . '/pagelib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_keystrokerecorder_renderer extends qtype_renderer {
-    
+
     public function formulation_and_controls(question_attempt $qa,
             question_display_options $options) {
-        
+        global $DB;
         $question = $qa->get_question();
         $is_test = $question->name == 'test';
-        $quiz_id = 1;
-
-        return $is_test ? $this->getTestHTML($qa, $options, $quiz_id) : $this->getRegistrationHTML($qa, $options, $quiz_id);
+        if ($quiz_id = $DB->get_field('qtype_keystrokerecorder', 'quiz_id', array('id' => $question->id))) {
+            return $is_test ? $this->getTestHTML($qa, $options, $quiz_id) : $this->getRegistrationHTML($qa, $options, $quiz_id);
+        } else {
+            $result = new stdClass();
+            $result->error = 'Could not update quiz options! (id='.$options->id.')';
+            return $result;
+        }
     }
 
     public function specific_feedback(question_attempt $qa) {
@@ -66,7 +70,7 @@ class qtype_keystrokerecorder_renderer extends qtype_renderer {
 
         $questiontext = $question->format_questiontext($qa);
         $placeholder = false;
-        
+
         if (preg_match('/_____+/', $questiontext, $matches)) {
             $placeholder = $matches[0];
         }
@@ -88,13 +92,13 @@ class qtype_keystrokerecorder_renderer extends qtype_renderer {
         global $USER, $PAGE;
 
         $question = $qa->get_question();
-        
+
         // inject iframe with the plugin form TODO: hash user id somehow
         $keystroke_form_html .= '<iframe src="http://localhost:1337/registration.html?user=' . strval($USER->id) . '&quizId=' . $quiz_id . '" style="width: 100%; height: 500px;">';
 
         $questiontext = $question->format_questiontext($qa);
         $placeholder = false;
-        
+
         if (preg_match('/_____+/', $questiontext, $matches)) {
             $placeholder = $matches[0];
         }

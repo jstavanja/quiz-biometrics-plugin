@@ -38,7 +38,10 @@ defined('MOODLE_INTERNAL') || die();
 class qtype_keystrokerecorder_edit_form extends question_edit_form {
 
     protected function definition_inner($mform) {
-        $this->add_interactive_settings();
+        $name = 'quiz_id';
+        $label = get_string('qtype_keystrokerecorder', $name);
+        $mform->addElement('text', $name, $label, array('size' => 3));
+        $mform->setType($name, PARAM_INT);
     }
 
     protected function data_preprocessing($question) {

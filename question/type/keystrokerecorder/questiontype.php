@@ -52,7 +52,38 @@ class qtype_keystrokerecorder extends question_type {
     }
 
     public function save_question_options($question) {
-        $this->save_hints($question);
+        global $DB;
+        $result = new stdClass();
+        $options = (object)array(
+            'id' => $question->id,
+            'quiz_id' => $question->quiz_id
+        );
+        if ($options->id = $DB->get_field('qtype_keystrokerecorder', 'id', array('id' => $question->id))) {
+            if (! $DB->update_record('qtype_keystrokerecorder', $options)) {
+                $result->error = 'Could not update quiz options! (id='.$options->id.')';
+                return $result;
+            }
+        } else {
+            if (! $options->id = $DB->insert_record('qtype_keystrokerecorder', $options)) {
+                $result->error = 'Could not insert question options!';
+                return $result;
+            }
+        }
+        parent::save_question_options($question);
+        return true;
+    }
+
+    public function get_question_options($question) {
+        global $DB, $OUTPUT;
+        // Load the options.
+        if (!$question->options = $DB->get_record('qtype_keystrokerecorder', array('id' => $question->id))) {
+            echo $OUTPUT->notification('Error: Missing question options!');
+            return false;
+        }
+
+        $question->quiz_id = $question->options->quiz_id;
+        parent::get_question_options($question);
+        return true;
     }
 
     protected function initialise_question_instance(question_definition $question, $questiondata) {
