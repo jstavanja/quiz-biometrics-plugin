@@ -39,7 +39,7 @@ class qtype_keystrokerecorder_edit_form extends question_edit_form {
 
     protected function definition_inner($mform) {
         $name = 'quiz_id';
-        $label = get_string('qtype_keystrokerecorder', $name);
+        $label = "Quiz ID from the dashboard";
         $mform->addElement('text', $name, $label, array('size' => 3));
         $mform->setType($name, PARAM_INT);
     }

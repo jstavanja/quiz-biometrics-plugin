@@ -40,7 +40,7 @@ class qtype_keystrokerecorder_renderer extends qtype_renderer {
         global $DB;
         $question = $qa->get_question();
         $is_test = $question->name == 'test';
-        if ($quiz_id = $DB->get_field('qtype_keystrokerecorder', 'quiz_id', array('id' => $question->id))) {
+        if ($quiz_id = $DB->get_field('qtype_keystrokerecorder', 'quiz_id', array('question_id' => $question->id))) {
             return $is_test ? $this->getTestHTML($qa, $options, $quiz_id) : $this->getRegistrationHTML($qa, $options, $quiz_id);
         } else {
             $result = new stdClass();
