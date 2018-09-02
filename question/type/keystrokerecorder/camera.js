@@ -42,6 +42,7 @@ btnTakePhoto.addEventListener("click", (e) => {
 if(btnSendPhoto){ // gets set in the registration form
   btnSendPhoto.addEventListener('click', function(e) {
     e.preventDefault()
+    btnSendPhoto.innerHTML = 'Sending ...'
     fetch(snap)
     .then(() => {
       const formData = new FormData()
@@ -65,6 +66,7 @@ if(btnSendPhoto){ // gets set in the registration form
 if(btnSendPhotoComparisonTest){ // gets set in the test form
   btnSendPhotoComparisonTest.addEventListener('click', (e) => {
     e.preventDefault()
+    btnSendPhotoComparisonTest.innerHTML = 'Sending ...'
     fetch(snap)
     .then(() => {
       const formData = new FormData()
